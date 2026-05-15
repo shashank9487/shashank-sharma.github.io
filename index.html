@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shashank Sharma — ML Ops & Data Engineer</title>
+  <style>
+    /* ── RESET & BASE ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:        #050915;
+      --bg2:       #0a1128;
+      --cyan:      #00d4ff;
+      --cyan-dim:  #00a8cc;
+      --purple:    #7b2fbe;
+      --purple2:   #a855f7;
+      --green:     #00ff9d;
+      --card:      rgba(255,255,255,0.04);
+      --border:    rgba(0,212,255,0.18);
+      --text:      #e2e8f0;
+      --muted:     #8892a4;
+      --font:      'Segoe UI', system-ui, -apple-system, sans-serif;
+      --mono:      'Consolas', 'Courier New', monospace;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { color: var(--green); }
+
+    /* ── NEURAL CANVAS ────────────────────────────── */
+    #neural-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.45;
+    }
+
+    /* ── NAV ──────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 60px;
+      background: rgba(5,9,21,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 1rem;
+      color: var(--cyan);
+      letter-spacing: 2px;
+    }
+    .nav-logo span { color: var(--purple2); }
+    nav ul { list-style: none; display: flex; gap: 36px; }
+    nav ul a {
+      color: var(--muted);
+      font-size: 0.88rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    nav ul a:hover { color: var(--cyan); }
+
+    /* ── SECTIONS ─────────────────────────────────── */
+    section { position: relative; z-index: 1; }
+
+    /* ── HERO ─────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 0 10vw;
+    }
+    .hero-tag {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--cyan);
+      letter-spacing: 3px;
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.2s forwards;
+    }
+    .hero-name {
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      background: linear-gradient(135deg, #fff 0%, var(--cyan) 50%, var(--purple2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.4s forwards;
+    }
+    .hero-title {
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      color: var(--muted);
+      margin-top: 14px;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.6s forwards;
+    }
+    .hero-title span { color: var(--cyan); }
+    .hero-desc {
+      max-width: 600px;
+      color: #94a3b8;
+      font-size: 1.05rem;
+      margin-bottom: 44px;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.8s forwards;
+    }
+    .hero-btns {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.6s 1s forwards;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 28px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s;
+      letter-spacing: 0.5px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--cyan-dim), var(--purple));
+      color: #fff;
+      border: none;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,212,255,0.3); color:#fff; }
+    .btn-outline {
+      background: transparent;
+      color: var(--cyan);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { border-color: var(--cyan); background: rgba(0,212,255,0.06); transform: translateY(-2px); color: var(--cyan); }
+
+    .hero-stats {
+      position: absolute;
+      right: 10vw;
+      bottom: 12vh;
+      display: flex;
+      gap: 40px;
+      opacity: 0;
+      animation: fadeUp 0.6s 1.2s forwards;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-size: 2.4rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--cyan), var(--purple2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label { font-size: 0.78rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+
+    /* ── SECTION WRAPPER ──────────────────────────── */
+    .section-wrap {
+      padding: 100px 10vw;
+    }
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--cyan);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+    .section-line {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      border-radius: 2px;
+      margin-bottom: 56px;
+    }
+
+    /* ── ABOUT ────────────────────────────────────── */
+    #about { background: var(--bg2); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+    .about-text p { color: #94a3b8; margin-bottom: 18px; font-size: 1.03rem; }
+    .about-text p strong { color: var(--cyan); font-weight: 600; }
+    .about-highlights {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .highlight-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .highlight-card:hover { border-color: var(--cyan); transform: translateX(6px); }
+    .highlight-icon { font-size: 1.6rem; flex-shrink: 0; }
+    .highlight-card h4 { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+    .highlight-card p { font-size: 0.83rem; color: var(--muted); margin: 0; }
+
+    /* ── SKILLS ───────────────────────────────────── */
+    #skills { background: var(--bg); }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .skill-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    .skill-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.5s, transform 0.5s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .skill-card:hover { border-color: var(--cyan); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,212,255,0.1); }
+    .skill-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .skill-icon { font-size: 1.4rem; }
+    .skill-card-header h3 { font-size: 0.95rem; font-weight: 700; color: var(--cyan); }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: rgba(0,212,255,0.08);
+      border: 1px solid rgba(0,212,255,0.2);
+      color: #94a3b8;
+    }
+
+    /* ── PROJECTS ─────────────────────────────────── */
+    #projects { background: var(--bg2); }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 28px;
+    }
+    .project-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    .project-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.5s, transform 0.5s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .project-card:hover { border-color: var(--purple2); transform: translateY(-5px); box-shadow: 0 20px 50px rgba(123,47,190,0.15); }
+    .project-num {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--purple2);
+      letter-spacing: 2px;
+      margin-bottom: 14px;
+    }
+    .project-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 12px; }
+    .project-card p { color: #94a3b8; font-size: 0.92rem; flex: 1; margin-bottom: 20px; }
+    .project-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .meta-tag {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: rgba(168,85,247,0.12);
+      border: 1px solid rgba(168,85,247,0.25);
+      color: var(--purple2);
+    }
+    .project-result {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--green);
+      font-family: var(--mono);
+      font-weight: 600;
+    }
+    .project-result::before { content: '▸'; }
+
+    /* ── EXPERIENCE ───────────────────────────────── */
+    #experience { background: var(--bg); }
+    .timeline { position: relative; padding-left: 36px; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--cyan), var(--purple), transparent);
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 52px;
+      opacity: 0;
+      transform: translateX(-16px);
+    }
+    .timeline-item.visible {
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 0.5s, transform 0.5s;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -33px;
+      top: 6px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--cyan);
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 12px var(--cyan);
+    }
+    .timeline-header {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .timeline-header h3 { font-size: 1.1rem; font-weight: 700; }
+    .timeline-company { color: var(--cyan); font-size: 0.92rem; font-weight: 600; }
+    .timeline-dates {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      background: rgba(0,212,255,0.07);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: 4px;
+    }
+    .timeline-item ul { list-style: none; margin-top: 12px; }
+    .timeline-item ul li {
+      color: #94a3b8;
+      font-size: 0.92rem;
+      margin-bottom: 7px;
+      padding-left: 18px;
+      position: relative;
+    }
+    .timeline-item ul li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--cyan);
+    }
+
+    /* ── CONTACT ──────────────────────────────────── */
+    #contact {
+      background: var(--bg2);
+      text-align: center;
+    }
+    #contact .section-line { margin: 14px auto 56px; }
+    .contact-card {
+      max-width: 600px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 52px 48px;
+    }
+    .contact-card p { color: #94a3b8; margin-bottom: 36px; font-size: 1.03rem; }
+    .contact-links { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 26px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      color: var(--text);
+      transition: all 0.25s;
+    }
+    .contact-link:hover { border-color: var(--cyan); color: var(--cyan); transform: translateY(-2px); }
+    .contact-link svg { width: 18px; height: 18px; }
+
+    /* ── FOOTER ───────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 28px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-family: var(--mono);
+      border-top: 1px solid var(--border);
+      position: relative;
+      z-index: 1;
+    }
+    footer span { color: var(--cyan); }
+
+    /* ── SCROLL FADE ──────────────────────────────── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── ANIMATIONS ───────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 12px var(--cyan); }
+      50%       { box-shadow: 0 0 24px var(--cyan), 0 0 48px rgba(0,212,255,0.3); }
+    }
+    .timeline-dot { animation: pulse-glow 2.5s infinite; }
+
+    /* ── RESPONSIVE ───────────────────────────────── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      nav ul { gap: 20px; }
+      .section-wrap { padding: 72px 6vw; }
+      #hero { padding: 0 6vw; }
+      .about-grid { grid-template-columns: 1fr; gap: 36px; }
+      .hero-stats { position: static; margin-top: 52px; justify-content: flex-start; }
+      .timeline-dates { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Neural network canvas -->
+<canvas id="neural-bg"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">SS<span>.</span>dev</div>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-tag">&gt;_ ML OPS &amp; DISTRIBUTED DATA SYSTEMS</div>
+  <h1 class="hero-name">Shashank<br/>Sharma</h1>
+  <p class="hero-title">Software Engineer — <span>Data &amp; ML Infrastructure</span></p>
+  <p class="hero-desc">
+    10+ years building distributed data pipelines, monitoring systems, and cloud infrastructure
+    that power data-driven and ML-driven organisations at scale. Currently focused on
+    ML Ops, resource observability, and AI-enabled data workflows.
+  </p>
+  <div class="hero-btns">
+    <a class="btn btn-primary" href="#projects">View Projects</a>
+    <a class="btn btn-outline" href="#contact">Get in Touch</a>
+    <a class="btn btn-outline" href="Shashank_Sharma_Waymo_Resume.docx" download>Download Resume</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">10+</div><div class="stat-label">Years Exp.</div></div>
+    <div class="stat"><div class="stat-num">15+</div><div class="stat-label">Pipelines Owned</div></div>
+    <div class="stat"><div class="stat-num">40%</div><div class="stat-label">MTTR Reduction</div></div>
+    <div class="stat"><div class="stat-num">99%</div><div class="stat-label">SLA Compliance</div></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-wrap">
+    <div class="section-label">// 01. about</div>
+    <h2 class="section-title">Who I Am</h2>
+    <div class="section-line"></div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>I'm a software engineer specialising in <strong>distributed data systems, ML infrastructure, and cloud resource optimisation</strong>. I design and operate the pipelines and platform tooling that keep data reliable and ML development fast.</p>
+        <p>My work sits at the intersection of <strong>software engineering, data infrastructure, and machine learning operations</strong> — building the invisible backbone that lets researchers and engineers move quickly with confidence.</p>
+        <p>Currently supporting large-scale data engineering at Damco Solutions (client: Attain Partners), where I build distributed ETL pipelines, observability dashboards, and AI-enabled data workflows including <strong>LLM pipeline optimisation and RAG data preparation</strong>.</p>
+        <p>I care deeply about system reliability, resource efficiency, and making complex infrastructure transparent and actionable for the teams who depend on it.</p>
+      </div>
+      <div class="about-highlights">
+        <div class="highlight-card">
+          <div class="highlight-icon">⚡</div>
+          <div><h4>Distributed Systems</h4><p>Apache Spark, EMR, NiFi — production multi-node clusters with fault tolerance &amp; exactly-once semantics</p></div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon">📊</div>
+          <div><h4>Observability &amp; Monitoring</h4><p>End-to-end pipeline health dashboards, SLA tracking, automated alerting &amp; remediation</p></div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon">☁️</div>
+          <div><h4>Cloud Resource Optimisation</h4><p>AWS &amp; Azure cost analysis, right-sizing, compute efficiency improvements across engineering teams</p></div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-icon">🤖</div>
+          <div><h4>ML Pipeline Engineering</h4><p>LLM pipeline optimisation, RAG data preparation, vector storage, PyTorch workflow support</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-wrap">
+    <div class="section-label">// 02. skills</div>
+    <h2 class="section-title">Technical Stack</h2>
+    <div class="section-line"></div>
+    <div class="skills-grid">
+
+      <div class="skill-card">
+        <div class="skill-card-header"><div class="skill-icon">🔀</div><h3>Distributed Systems</h3></div>
+        <div class="skill-tags">
+          <span class="tag">Apache Spark</span><span class="tag">PySpark</span>
+          <span class="tag">AWS EMR</span><span class="tag">Apache NiFi</span>
+          <span class="tag">Azure HDInsight</span><span class="tag">Fault Tolerance</span>
+          <span class="tag">Data Partitioning</span>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-card-header"><div class="skill-icon">🔭</div><h3>Monitoring &amp; Observability</h3></div>
+        <div class="skill-tags">
+          <span class="tag">OpenMetaData</span><span class="tag">Data Lineage</span>
+          <span class="tag">SLA Monitoring</span><span class="tag">Data Quality</span>
+          <span class="tag">Automated Remediation</span><span class="tag">Pipeline Health</span>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-card-header"><div class="skill-icon">⚙️</div><h3>Orchestration &amp; Pipelines</h3></div>
+        <div class="skill-tags">
+          <span class="tag">Apache Airflow</span><span class="tag">AWS Glue</span>
+          <span class="tag">Azure Data Factory</span><span class="tag">Talend Cloud</span>
+          <span class="tag">MuleSoft</span><span class="tag">ETL/ELT</span>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-card-header"><div class="skill-icon">💻</div><h3>Languages</h3></div>
+        <div class="skill-tags">
+          <span class="tag">Python 3.x</span><span class="tag">SQL</span>
+          <span class="tag">Spark SQL</span><span class="tag">PySpark</span><span class="tag">Bash</span>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-card-header"><div class="skill-icon">☁️</div><h3>Cloud &amp; DevOps</h3></div>
+        <div class="skill-tags">
+          <span class="tag">AWS (EMR, Glue, Lambda, S3, Athena)</span>
+          <span class="tag">Azure (Synapse, ADLS Gen2)</span>
+          <span class="tag">Docker</span><span class="tag">CI/CD</span>
+          <span class="tag">GitHub Actions</span><span class="tag">IAM</span>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-card-header"><div class="skill-icon">🤖</div><h3>AI / ML Pipelines</h3></div>
+        <div class="skill-tags">
+          <span class="tag">LLM Pipeline Optimisation</span>
+          <span class="tag">RAG Data Preparation</span>
+          <span class="tag">Vector Data Storage</span>
+          <span class="tag">PyTorch</span><span class="tag">ML Workflow Support</span>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-card-header"><div class="skill-icon">🗄️</div><h3>Data Platforms</h3></div>
+        <div class="skill-tags">
+          <span class="tag">Databricks</span><span class="tag">Amazon Redshift</span>
+          <span class="tag">PostgreSQL</span><span class="tag">MySQL</span>
+          <span class="tag">MongoDB</span><span class="tag">DynamoDB</span>
+          <span class="tag">MS SQL Server</span>
+        </div>
+      </div>
+
+      <div class="skill-card">
+        <div class="skill-card-header"><div class="skill-icon">🏗️</div><h3>Data Architecture</h3></div>
+        <div class="skill-tags">
+          <span class="tag">Medallion Architecture</span><span class="tag">Data Mesh</span>
+          <span class="tag">Data Governance</span><span class="tag">Data Lineage</span>
+          <span class="tag">Canonical Datasets</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-wrap">
+    <div class="section-label">// 03. projects</div>
+    <h2 class="section-title">Featured Work</h2>
+    <div class="section-line"></div>
+    <div class="projects-grid">
+
+      <div class="project-card">
+        <div class="project-num">PROJECT_01</div>
+        <h3>Pipeline Observability Platform</h3>
+        <p>Designed and built an end-to-end pipeline monitoring system tracking SLA compliance, job health, and data quality metrics across 15+ concurrent production pipelines. Integrated automated remediation workflows triggered on failure events.</p>
+        <div class="project-meta">
+          <span class="meta-tag">Apache Airflow</span>
+          <span class="meta-tag">OpenMetaData</span>
+          <span class="meta-tag">AWS CloudWatch</span>
+          <span class="meta-tag">Python</span>
+          <span class="meta-tag">PostgreSQL</span>
+        </div>
+        <div class="project-result">40% reduction in mean time to resolution (MTTR)</div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">PROJECT_02</div>
+        <h3>Data Lineage &amp; Resource Tracking System</h3>
+        <p>Built an enterprise data lineage system using OpenMetaData providing full visibility into data flows, compute dependencies, and resource usage trends. Enabled engineering teams to trace data origins and identify costly redundant workloads.</p>
+        <div class="project-meta">
+          <span class="meta-tag">OpenMetaData</span>
+          <span class="meta-tag">Apache Spark</span>
+          <span class="meta-tag">AWS Glue</span>
+          <span class="meta-tag">Databricks</span>
+          <span class="meta-tag">Python</span>
+        </div>
+        <div class="project-result">Full compute dependency visibility across 5 engineering teams</div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">PROJECT_03</div>
+        <h3>LLM &amp; RAG Data Pipeline Optimisation</h3>
+        <p>Led optimisation of LLM training data pipelines and RAG preparation workflows, advising ML engineers on resource utilisation best practices. Reduced redundant compute consumption and improved throughput for AI model data preparation at scale.</p>
+        <div class="project-meta">
+          <span class="meta-tag">Python</span>
+          <span class="meta-tag">PyTorch</span>
+          <span class="meta-tag">Vector Storage</span>
+          <span class="meta-tag">Apache Airflow</span>
+          <span class="meta-tag">AWS S3</span>
+        </div>
+        <div class="project-result">Measurable reduction in GPU idle time and compute waste</div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">PROJECT_04</div>
+        <h3>Medallion Architecture Data Platform</h3>
+        <p>Implemented Bronze / Silver / Gold Medallion Architecture on Databricks, standardising data transformation layers across the organisation. Enabled self-service analytics and eliminated redundant data copies across business units.</p>
+        <div class="project-meta">
+          <span class="meta-tag">Databricks</span>
+          <span class="meta-tag">Apache Spark</span>
+          <span class="meta-tag">AWS Glue</span>
+          <span class="meta-tag">SQL</span>
+          <span class="meta-tag">Python</span>
+        </div>
+        <div class="project-result">Self-service analytics enabled for GTM &amp; Product teams</div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">PROJECT_05</div>
+        <h3>Cloud Resource Optimisation Initiative</h3>
+        <p>Analysed compute and storage utilisation patterns across engineering teams on AWS, identifying over-provisioned jobs, idle compute windows, and redundant storage layers. Translated findings into actionable cost-reduction recommendations.</p>
+        <div class="project-meta">
+          <span class="meta-tag">AWS Cost Explorer</span>
+          <span class="meta-tag">AWS EMR</span>
+          <span class="meta-tag">Lambda</span>
+          <span class="meta-tag">Python</span>
+          <span class="meta-tag">SQL</span>
+        </div>
+        <div class="project-result">Significant infrastructure cost reduction through right-sizing</div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">PROJECT_06</div>
+        <h3>Real-Time Streaming Data Infrastructure</h3>
+        <p>Developed real-time streaming pipelines using Apache NiFi and Azure Service Bus, enabling near-real-time event processing and instantaneous pipeline fault detection. Supported event-driven analytics and operational dashboards.</p>
+        <div class="project-meta">
+          <span class="meta-tag">Apache NiFi</span>
+          <span class="meta-tag">Azure Service Bus</span>
+          <span class="meta-tag">Azure Data Factory</span>
+          <span class="meta-tag">Python</span>
+          <span class="meta-tag">Kafka</span>
+        </div>
+        <div class="project-result">Real-time fault detection across distributed streaming workloads</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-wrap">
+    <div class="section-label">// 04. experience</div>
+    <h2 class="section-title">Career Timeline</h2>
+    <div class="section-line"></div>
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-header">
+          <h3>Analyst Programmer &amp; Data Engineer</h3>
+          <span class="timeline-company">Damco Solutions — Attain Partners</span>
+          <span class="timeline-dates">Mar 2023 – Present</span>
+        </div>
+        <ul>
+          <li>Production distributed pipelines on Apache Spark &amp; AWS Glue across multi-node clusters</li>
+          <li>Built pipeline observability platform — 15+ pipelines monitored, 40% MTTR reduction</li>
+          <li>Data lineage &amp; resource tracking with OpenMetaData across engineering teams</li>
+          <li>LLM pipeline optimisation and RAG data preparation for AI-enabled workflows</li>
+          <li>CI/CD automation with AWS CodeBuild &amp; GitHub Actions</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-header">
+          <h3>Technical Lead – Data Engineering</h3>
+          <span class="timeline-company">Damco Solutions Pvt. Ltd.</span>
+          <span class="timeline-dates">Aug 2015 – Feb 2023</span>
+        </div>
+        <ul>
+          <li>Led team building scalable ETL pipelines on Apache Spark, Azure Data Factory, Talend Cloud</li>
+          <li>Architected Data Mesh solutions enabling distributed data ownership across teams</li>
+          <li>Real-time streaming pipelines with Apache NiFi and Azure Service Bus</li>
+          <li>Enterprise cloud migrations across AWS (EMR, Redshift, DMS) and Azure (Synapse, ADLS Gen2)</li>
+          <li>Data governance frameworks: quality monitoring, automated remediation, IAM access controls</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-header">
+          <h3>Server Engineer</h3>
+          <span class="timeline-company">Grey Orange Pte. Ltd.</span>
+          <span class="timeline-dates">Jan 2015 – Aug 2015</span>
+        </div>
+        <ul>
+          <li>Backend data services for real-time robotics telemetry at high throughput</li>
+          <li>Monitored and debugged distributed backend systems in production robotics environments</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-header">
+          <h3>Software Developer</h3>
+          <span class="timeline-company">Droid Solutions | InoxApps | Anatta Design</span>
+          <span class="timeline-dates">Jan 2011 – Jan 2015</span>
+        </div>
+        <ul>
+          <li>Full-stack software development and data processing across multiple client domains</li>
+          <li>Database design and ETL scripting with MySQL, MS SQL Server, Python, and SQL</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-wrap">
+    <div class="section-label" style="text-align:center">// 05. contact</div>
+    <h2 class="section-title" style="text-align:center">Get In Touch</h2>
+    <div class="section-line"></div>
+    <div class="contact-card fade-in">
+      <p>I'm currently open to new opportunities in ML Ops, Data Platform Engineering, and Distributed Systems. Whether you have a role in mind or just want to connect — my inbox is open.</p>
+      <div class="contact-links">
+        <a class="contact-link" href="mailto:oncloud.shashank@gmail.com">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          oncloud.shashank@gmail.com
+        </a>
+        <a class="contact-link" href="https://linkedin.com/in/shashank-sharma" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          LinkedIn
+        </a>
+        <a class="contact-link" href="https://github.com/shashank-sharma" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>Shashank Sharma</span> — Built with HTML &amp; CSS — <span>2026</span>
+</footer>
+
+<script>
+  /* ── NEURAL NETWORK CANVAS ──────────────────────── */
+  const canvas = document.getElementById('neural-bg');
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes = [], animId;
+  const NODE_COUNT = 80;
+  const MAX_DIST = 160;
+  const CYAN = '0,212,255';
+  const PURPLE = '168,85,247';
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function initNodes() {
+    nodes = Array.from({ length: NODE_COUNT }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      r: Math.random() * 2 + 1,
+    }));
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    nodes.forEach(n => {
+      n.x += n.vx; n.y += n.vy;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+    });
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < MAX_DIST) {
+          const alpha = (1 - dist / MAX_DIST) * 0.6;
+          const mid = (i + j) % 2 === 0;
+          ctx.strokeStyle = `rgba(${mid ? CYAN : PURPLE},${alpha})`;
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+    }
+    nodes.forEach(n => {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${CYAN},0.7)`;
+      ctx.fill();
+    });
+    animId = requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', () => { resize(); initNodes(); });
+  resize(); initNodes(); draw();
+
+  /* ── SCROLL ANIMATIONS ──────────────────────────── */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll(
+    '.skill-card, .project-card, .timeline-item, .fade-in'
+  ).forEach((el, i) => {
+    el.style.transitionDelay = `${(i % 4) * 80}ms`;
+    observer.observe(el);
+  });
+
+  /* ── ACTIVE NAV ──────────────────────────────────── */
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav ul a');
+  const navObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(l => l.style.color = '');
+        const active = document.querySelector(`nav a[href="#${e.target.id}"]`);
+        if (active) active.style.color = 'var(--cyan)';
+      }
+    });
+  }, { threshold: 0.4 });
+  sections.forEach(s => navObs.observe(s));
+</script>
+</body>
+</html>
